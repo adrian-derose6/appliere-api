@@ -1,12 +1,19 @@
+import 'express-async-errors';
 import express, { Express, Request, Response } from 'express';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import cors from 'cors';
+import morgan from 'morgan';
+
+import connectDB from './db/connect-db';
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV !== 'production') {
+	app.use(morgan('dev'));
+}
 
 app.use(express.json());
 app.use(helmet());
@@ -16,6 +23,17 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
 
-app.listen(port, () => {
-	console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-});
+const port = process.env.PORT || 5000;
+const start = async () => {
+	try {
+		await connectDB(process.env.MONGO_URL!);
+
+		app.listen(port, () => {
+			console.log(`Server is listening on port ${port}`);
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+start();
