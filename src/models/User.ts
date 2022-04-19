@@ -1,49 +1,54 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, Model, model, Types } from 'mongoose';
+import bcrypt from 'bcryptjs';
+import validator from 'validator';
 
-interface IUser {
-	_id: Types.ObjectId;
-	name: string;
+const HASH_ROUNDS = 10;
+
+interface User {
+	fullName: string;
 	email: string;
 	password: string;
-	lastName: string;
 	location: string;
+	image: string;
 }
 
-const UserSchema = new Schema<IUser>({
-	name: {
-		type: String,
-		required: [true, 'Please provide name'],
-		maxlength: 20,
-		trim: true,
+const UserSchema = new Schema<User, Model<User>>(
+	{
+		fullName: {
+			type: String,
+			required: [true, 'Please provide name'],
+			maxlength: 30,
+			trim: true,
+		},
+		email: {
+			type: String,
+			required: [true, 'Please provide email'],
+			validate: {
+				validator: validator.isEmail,
+				message: 'Please provide a valid email',
+			},
+			unique: true,
+			index: true,
+		},
+		password: {
+			type: String,
+			required: [true, 'Please provide password'],
+			minlength: 6,
+			select: false,
+		},
+		location: {
+			type: String,
+			trim: true,
+			maxlength: 20,
+			default: 'my city',
+		},
+		image: {
+			type: String,
+		},
 	},
-	email: {
-		type: String,
-		required: [true, 'Please provide email'],
-		// validate: {
-		//	validator: validator.isEmail,
-		//	message: 'Please provide a valid email',
-		//},
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: [true, 'Please provide password'],
-		minlength: 6,
-		select: false,
-	},
-	lastName: {
-		type: String,
-		trim: true,
-		maxlength: 20,
-	},
-	location: {
-		type: String,
-		trim: true,
-		maxlength: 20,
-		default: 'my city',
-	},
-});
+	{ timestamps: true }
+);
 
-const User = model<IUser>('User', UserSchema);
+const User = model<User, Model<User>>('User', UserSchema);
 
 export default User;
