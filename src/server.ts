@@ -7,6 +7,9 @@ import morgan from 'morgan';
 
 import connectDB from './db/connect-db.js';
 
+// Import routes
+import authRouter from './routes/authRoutes.js';
+
 dotenv.config();
 
 const app: Express = express();
@@ -22,7 +25,8 @@ app.use(cors());
 app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
-console.log('server running');
+
+app.use('/api/v1/auth', authRouter);
 
 const PORT = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGO_URL as string;
