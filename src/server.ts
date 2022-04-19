@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 
-import connectDB from './db/connect-db';
+import connectDB from './db/connect-db.js';
 
 dotenv.config();
 
@@ -22,14 +22,17 @@ app.use(cors());
 app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
+console.log('server running');
 
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
+const mongoUrl = process.env.MONGO_URL as string;
+
 const start = async () => {
 	try {
-		await connectDB(process.env.MONGO_URL!);
+		await connectDB(mongoUrl);
 
-		app.listen(port, () => {
-			console.log(`Server is listening on port ${port}`);
+		app.listen(PORT, () => {
+			console.log(`Server is listening on port ${PORT}`);
 		});
 	} catch (error) {
 		console.log(error);
