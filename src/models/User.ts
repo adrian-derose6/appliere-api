@@ -16,8 +16,9 @@ interface User {
 	createdAt: string;
 }
 
-type UserDocument = User &
+export type UserDocument = User &
 	Document & {
+		_doc: any;
 		createJWT: () => string;
 		comparePassword: (candidatePassword: string) => Promise<boolean>;
 	};
