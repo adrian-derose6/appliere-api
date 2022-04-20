@@ -23,6 +23,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 			email: user.email,
 			location: user.location,
 		},
+		accessToken: token,
 	});
 };
 

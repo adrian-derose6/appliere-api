@@ -4,6 +4,7 @@ import validator from 'validator';
 import jwt from 'jsonwebtoken';
 
 const { Schema, Model, Document, Types } = mongoose;
+
 const HASH_ROUNDS = 10;
 
 interface User {
