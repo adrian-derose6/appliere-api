@@ -23,7 +23,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 		user: {
 			fullName: user.fullName,
 			email: user.email,
-			location: user.location,
 		},
 		accessToken,
 		message: 'User successfully created',
