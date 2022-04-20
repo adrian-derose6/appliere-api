@@ -7,7 +7,7 @@ const errorHandler = (
 	req: Request,
 	res: Response,
 	next: NextFunction
-) => {
+): void => {
 	const defaultError: CustomErrorType = {
 		statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
 		message: err.message || 'Something went wrong, try again later',
