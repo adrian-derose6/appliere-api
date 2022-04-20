@@ -11,7 +11,10 @@ import connectDB from './db/connect-db.js';
 
 // Import routes
 import authRouter from './routes/authRoutes.js';
+
+// Import custom middleware
 import errorHandler from './middleware/error-handler.js';
+import notFound from './middleware/not-found.js';
 
 dotenv.config();
 
@@ -34,6 +37,7 @@ app.use('/api/v1/auth', authRouter);
 
 // Inject custom middleware
 app.use(errorHandler);
+app.use(notFound);
 
 const PORT = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGO_URL as string;
