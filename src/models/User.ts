@@ -40,7 +40,6 @@ const UserSchema = new Schema<User, Model<User>>(
 			type: String,
 			trim: true,
 			maxlength: 20,
-			default: 'my city',
 		},
 		image: {
 			type: String,
