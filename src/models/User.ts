@@ -1,7 +1,9 @@
-import { Schema, Model, model, Types } from 'mongoose';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
+
+const { Schema, Types } = mongoose;
 
 const HASH_ROUNDS = 10;
 
@@ -13,7 +15,7 @@ interface User {
 	image?: string;
 }
 
-const UserSchema = new Schema<User, Model<User>>(
+const UserSchema = new Schema<User>(
 	{
 		fullName: {
 			type: String,
@@ -29,7 +31,6 @@ const UserSchema = new Schema<User, Model<User>>(
 				message: 'Please provide a valid email',
 			},
 			unique: true,
-			index: true,
 		},
 		password: {
 			type: String,
@@ -68,6 +69,4 @@ UserSchema.methods.comparePassword = async function (
 	return isMatch;
 };
 
-const User = model<User, Model<User>>('User', UserSchema);
-
-export default User;
+export default mongoose.model<User>('User', UserSchema);
