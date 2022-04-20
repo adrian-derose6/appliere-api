@@ -15,6 +15,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 		throw new BadRequestError('Email is already in use');
 	}
 	const user = await User.create({ fullName, email, password });
+	const token = user.createJWT();
 
 	res.status(StatusCodes.CREATED).json({
 		user: {

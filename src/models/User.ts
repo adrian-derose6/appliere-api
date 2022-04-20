@@ -3,8 +3,7 @@ import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 
-const { Schema, Types } = mongoose;
-
+const { Schema, Model, Document, Types } = mongoose;
 const HASH_ROUNDS = 10;
 
 interface User {
@@ -13,9 +12,16 @@ interface User {
 	password: string;
 	location?: string;
 	image?: string;
+	createdAt: string;
 }
 
-const UserSchema = new Schema<User>(
+type UserDocument = User &
+	Document & {
+		createJWT: () => string;
+		comparePassword: (candidatePassword: string) => Promise<boolean>;
+	};
+
+const UserSchema = new Schema<UserDocument>(
 	{
 		fullName: {
 			type: String,
@@ -64,9 +70,11 @@ UserSchema.methods.createJWT = function (): string {
 
 UserSchema.methods.comparePassword = async function (
 	candidatePassword: string
-) {
+): Promise<boolean> {
 	const isMatch = await bcrypt.compare(candidatePassword, this.password);
 	return isMatch;
 };
 
-export default mongoose.model<User>('User', UserSchema);
+const User = mongoose.model<UserDocument>('User', UserSchema);
+
+export default User;
