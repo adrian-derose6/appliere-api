@@ -5,9 +5,9 @@ import User, { UserDocument } from '../models/User.js';
 import { BadRequestError, UnauthenticatedError } from '../errors/index.js';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-	const { fullName, email, password } = req.body;
+	const { firstName, lastName, email, password } = req.body;
 
-	if (!fullName || !email || !password) {
+	if (!firstName || !email || !password) {
 		throw new BadRequestError('Please provide all values');
 	}
 
@@ -16,14 +16,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 		throw new BadRequestError('Email is already in use');
 	}
 
-	const user = await User.create({ fullName, email, password });
+	const user = await User.create({ firstName, lastName, email, password });
 	const accessToken = user.createJWT();
 
 	res.status(StatusCodes.CREATED).json({
-		user: {
-			fullName: user.fullName,
-			email: user.email,
-		},
+		user,
 		accessToken,
 		message: 'User successfully created',
 	});

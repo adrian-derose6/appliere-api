@@ -3,12 +3,13 @@ import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 
-const { Schema, Model, Document, Types } = mongoose;
+const { Schema, Types } = mongoose;
 
 const HASH_ROUNDS = 10;
 
 interface User {
-	fullName: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	password: string;
 	location?: string;
@@ -17,7 +18,7 @@ interface User {
 }
 
 export type UserDocument = User &
-	Document & {
+	mongoose.Document & {
 		_doc: any;
 		createJWT: () => string;
 		comparePassword: (candidatePassword: string) => Promise<boolean>;
@@ -25,7 +26,13 @@ export type UserDocument = User &
 
 const UserSchema = new Schema<UserDocument>(
 	{
-		fullName: {
+		firstName: {
+			type: String,
+			required: [true, 'Please provide name'],
+			maxlength: 30,
+			trim: true,
+		},
+		lastName: {
 			type: String,
 			required: [true, 'Please provide name'],
 			maxlength: 30,
