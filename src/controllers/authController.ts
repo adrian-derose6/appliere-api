@@ -40,7 +40,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 	const isPasswordCorrect = await user.comparePassword(password);
 	if (!isPasswordCorrect) {
-		throw new UnauthenticatedError('Invalid credentials');
+		throw new UnauthenticatedError('Invalid password');
 	}
 
 	const accessToken = user.createJWT();
