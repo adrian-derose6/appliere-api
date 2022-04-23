@@ -8,18 +8,32 @@ const { Schema, Types } = mongoose;
 const HASH_ROUNDS = 10;
 
 interface User {
-	fullName: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	password: string;
 	location?: string;
 	image?: string;
+	createdAt: string;
 }
 
-const UserSchema = new Schema<User>(
+export type UserDocument = User &
+	mongoose.Document & {
+		_doc: any;
+		createJWT: () => string;
+		comparePassword: (candidatePassword: string) => Promise<boolean>;
+	};
+
+const UserSchema = new Schema<UserDocument>(
 	{
-		fullName: {
+		firstName: {
 			type: String,
 			required: [true, 'Please provide name'],
+			maxlength: 30,
+			trim: true,
+		},
+		lastName: {
+			type: String,
 			maxlength: 30,
 			trim: true,
 		},
@@ -35,7 +49,7 @@ const UserSchema = new Schema<User>(
 		password: {
 			type: String,
 			required: [true, 'Please provide password'],
-			minlength: 6,
+			minlength: 8,
 			select: false,
 		},
 		location: {
@@ -64,9 +78,11 @@ UserSchema.methods.createJWT = function (): string {
 
 UserSchema.methods.comparePassword = async function (
 	candidatePassword: string
-) {
+): Promise<boolean> {
 	const isMatch = await bcrypt.compare(candidatePassword, this.password);
 	return isMatch;
 };
 
-export default mongoose.model<User>('User', UserSchema);
+const User = mongoose.model<UserDocument>('User', UserSchema);
+
+export default User;
