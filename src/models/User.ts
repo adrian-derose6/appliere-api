@@ -34,7 +34,6 @@ const UserSchema = new Schema<UserDocument>(
 		},
 		lastName: {
 			type: String,
-			required: [true, 'Please provide name'],
 			maxlength: 30,
 			trim: true,
 		},
@@ -50,7 +49,7 @@ const UserSchema = new Schema<UserDocument>(
 		password: {
 			type: String,
 			required: [true, 'Please provide password'],
-			minlength: 6,
+			minlength: 8,
 			select: false,
 		},
 		location: {
