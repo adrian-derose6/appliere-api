@@ -3,6 +3,9 @@ import { Request, Response, NextFunction } from 'express';
 
 import { UnauthenticatedError } from '../errors/index.js';
 
+interface JwtPayload {
+	userId: string;
+}
 const authenticateUser = async (
 	req: Request,
 	res: Response,
@@ -16,9 +19,12 @@ const authenticateUser = async (
 	const token = authHeader.split(' ')[1];
 
 	try {
-		const payload = jwt.verify(token, process.env.JWT_SECRET as string);
-		console.log(payload);
-		req.body.user = { userId: '6264685349952596cc6c3329' };
+		const payload = jwt.verify(
+			token,
+			process.env.JWT_SECRET as string
+		) as JwtPayload;
+
+		req.body.user = { userId: payload.userId };
 		next();
 	} catch (error) {
 		throw new UnauthenticatedError('Authentication Invalid');

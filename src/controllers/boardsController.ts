@@ -8,11 +8,17 @@ export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
 };
 
-export const getAllBoards = async (
-	req: Request,
-	res: Response
-): Promise<void> => {
-	res.status(StatusCodes.OK).json({});
+export const getBoards = async (req: Request, res: Response): Promise<void> => {
+	const {
+		user: { userId },
+	} = req.body;
+
+	const queryObject = {
+		createdBy: userId,
+	};
+	const boards = await Board.find(queryObject);
+
+	res.status(StatusCodes.OK).json({ boards });
 };
 
 export const createBoard = async (
@@ -20,7 +26,7 @@ export const createBoard = async (
 	res: Response
 ): Promise<void> => {
 	const { boardName } = req.body;
-	console.log(boardName);
+
 	if (!boardName) {
 		throw new BadRequestError('Please name board');
 	}
