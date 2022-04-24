@@ -45,6 +45,41 @@ export const createBoard = async (
 	res.status(StatusCodes.CREATED).json({ board });
 };
 
+export const updateBoard = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { id: boardId } = req.params;
+	const { boardName } = req.body;
+
+	if (!boardName) {
+		throw new BadRequestError('Please provide all values');
+	}
+
+	const board = await Board.findOne({ _id: boardId });
+
+	if (!board) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
+	}
+
+	checkPermissions(req.body.user, board.createdBy);
+
+	if (boardName) {
+		board.boardName = boardName;
+		await board.save();
+	}
+
+	res.status(StatusCodes.OK).json({ board });
+	/* const updatedBoard = await Board.findOneAndUpdate(
+		{ _id: boardId },
+		req.body,
+		{
+			new: true,
+			runValidators: true,
+		}
+	);*/
+};
+
 export const deleteBoard = async (
 	req: Request,
 	res: Response
@@ -53,7 +88,7 @@ export const deleteBoard = async (
 	const board = await Board.findOne({ _id: boardId });
 
 	if (!board) {
-		throw new NotFoundError(`No board with id : ${boardId}`);
+		throw new NotFoundError(`No board with id: ${boardId}`);
 	}
 
 	checkPermissions(req.body.user, board.createdBy);
