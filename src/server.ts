@@ -14,8 +14,9 @@ import authRouter from './routes/authRoutes.js';
 import boardsRouter from './routes/boardsRoutes.js';
 
 // Import custom middleware
-import errorHandler from './middleware/error-handler.js';
-import notFound from './middleware/not-found.js';
+import errorHandler from './middleware/errorHandler.js';
+import authenticateUser from './middleware/authenticateUser.js';
+import notFound from './middleware/notFound.js';
 
 dotenv.config();
 
@@ -35,7 +36,7 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/boards', boardsRouter);
+app.use('/api/v1/boards', authenticateUser, boardsRouter);
 
 // Inject custom middleware
 app.use(errorHandler);
