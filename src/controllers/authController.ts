@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import User, { UserDocument } from '../models/User.js';
+import User from '../models/User.js';
 import { BadRequestError, UnauthenticatedError } from '../errors/index.js';
 
 export const register = async (req: Request, res: Response): Promise<void> => {

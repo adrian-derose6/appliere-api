@@ -1,4 +1,4 @@
-import { AnyNsRecord } from 'dns';
+import { ObjectID } from 'mongodb';
 import mongoose from 'mongoose';
 import validator from 'validator';
 
@@ -7,6 +7,7 @@ const { Schema, Types } = mongoose;
 interface Board {
 	boardName: string;
 	lists: any;
+	createdBy: any;
 }
 
 export type BoardDocument = Board &
@@ -26,7 +27,7 @@ const BoardSchema = new Schema<BoardDocument>(
 	{
 		boardName: {
 			type: String,
-			required: [true, 'Please provide board name'],
+			default: 'New Board',
 			maxlength: 30,
 			trim: true,
 		},
@@ -43,6 +44,11 @@ const BoardSchema = new Schema<BoardDocument>(
 				{ title: 'Offer' },
 				{ title: 'Follow Up' },
 			],
+		},
+		createdBy: {
+			type: Types.ObjectId,
+			ref: 'User',
+			required: [true, 'Please provide user'],
 		},
 	},
 	{ timestamps: true }

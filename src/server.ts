@@ -11,6 +11,7 @@ import connectDB from './db/connect-db.js';
 
 // Import routes
 import authRouter from './routes/authRoutes.js';
+import boardsRouter from './routes/boardsRoutes.js';
 
 // Import custom middleware
 import errorHandler from './middleware/error-handler.js';
@@ -34,6 +35,7 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/boards', boardsRouter);
 
 // Inject custom middleware
 app.use(errorHandler);
