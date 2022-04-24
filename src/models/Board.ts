@@ -15,7 +15,7 @@ export type BoardDocument = Board &
 		_doc: any;
 	};
 
-const listSchema = new Schema({
+const ListSchema = new Schema({
 	title: {
 		type: String,
 		trim: true,
@@ -35,10 +35,20 @@ const BoardSchema = new Schema<BoardDocument>(
 			type: [
 				{
 					title: { type: String },
+					jobs: {
+						type: [{ company: String, position: String }],
+						default: [],
+					},
 				},
 			],
 			default: [
-				{ title: 'Wishlist' },
+				{
+					title: 'Wishlist',
+					jobs: [
+						{ company: 'Facebook', position: 'Software Engineer' },
+						{ company: 'Google', position: 'Front-End Developer' },
+					],
+				},
 				{ title: 'Applied' },
 				{ title: 'Interview' },
 				{ title: 'Offer' },
@@ -48,7 +58,7 @@ const BoardSchema = new Schema<BoardDocument>(
 		createdBy: {
 			type: Types.ObjectId,
 			ref: 'User',
-			required: [true, 'Please provide user'],
+			required: [true, 'User ID is required'],
 		},
 	},
 	{ timestamps: true }
