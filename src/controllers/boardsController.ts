@@ -32,16 +32,16 @@ export const createBoard = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const { boardName } = req.body;
+	const { name } = req.body;
 	const {
 		user: { userId },
 	} = req.body;
 
-	if (!boardName) {
+	if (!name) {
 		throw new BadRequestError('Please name board');
 	}
 
-	const board = await Board.create({ createdBy: userId, boardName });
+	const board = await Board.create({ createdBy: userId, name });
 	res.status(StatusCodes.CREATED).json({ board });
 };
 
@@ -50,9 +50,9 @@ export const updateBoard = async (
 	res: Response
 ): Promise<void> => {
 	const { id: boardId } = req.params;
-	const { boardName } = req.body;
+	const { name } = req.body;
 
-	if (!boardName) {
+	if (!name) {
 		throw new BadRequestError('Please provide all values');
 	}
 
@@ -64,8 +64,8 @@ export const updateBoard = async (
 
 	checkPermissions(req.body.user, board.createdBy);
 
-	if (boardName) {
-		board.boardName = boardName;
+	if (name) {
+		board.name = name;
 		await board.save();
 	}
 

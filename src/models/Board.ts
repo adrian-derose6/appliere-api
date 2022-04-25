@@ -5,7 +5,7 @@ import validator from 'validator';
 const { Schema, Types } = mongoose;
 
 interface Board {
-	boardName: string;
+	name: string;
 	lists: any;
 	createdBy: any;
 }
@@ -25,7 +25,7 @@ const ListSchema = new Schema({
 
 const BoardSchema = new Schema<BoardDocument>(
 	{
-		boardName: {
+		name: {
 			type: String,
 			default: 'New Board',
 			maxlength: 30,
