@@ -19,13 +19,13 @@ export const getBoards = async (req: Request, res: Response): Promise<void> => {
 	const { archived } = req.query;
 
 	let queryObject = {
-		archived,
+		archived: archived || false,
 		createdBy: user.userId,
 	};
 
 	const boards = await Board.find(queryObject);
-
-	res.status(StatusCodes.OK).json({ boards });
+	const numOfBoards = await Board.countDocuments(queryObject);
+	res.status(StatusCodes.OK).json({ boards, numOfBoards });
 };
 
 export const createBoard = async (
