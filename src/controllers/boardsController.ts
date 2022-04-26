@@ -50,10 +50,6 @@ export const updateBoard = async (
 	const { id: boardId } = req.params;
 	const { name, archived } = req.body;
 
-	if (!name || !archived) {
-		throw new BadRequestError('No fields provided in request body');
-	}
-
 	const board = await Board.findOne({ _id: boardId });
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
