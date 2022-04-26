@@ -8,21 +8,21 @@ import {
 	NotFoundError,
 } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
+import queryParamToBool from '../utils/queryParamToBool.js';
 
 export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
 };
 
-export const getAllBoards = async (
-	req: Request,
-	res: Response
-): Promise<void> => {
-	const {
-		user: { userId },
-	} = req.body;
-	const queryObject = {
-		createdBy: userId,
+export const getBoards = async (req: Request, res: Response): Promise<void> => {
+	const { user } = req.body;
+	const { archived } = req.query;
+
+	let queryObject = {
+		archived,
+		createdBy: user.userId,
 	};
+
 	const boards = await Board.find(queryObject);
 
 	res.status(StatusCodes.OK).json({ boards });
@@ -32,16 +32,13 @@ export const createBoard = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const { name } = req.body;
-	const {
-		user: { userId },
-	} = req.body;
+	const { name, user, archived } = req.body;
 
 	if (!name) {
 		throw new BadRequestError('Please name board');
 	}
 
-	const board = await Board.create({ createdBy: userId, name });
+	const board = await Board.create({ createdBy: user.userId, name, archived });
 	res.status(StatusCodes.CREATED).json({ board });
 };
 
@@ -50,7 +47,7 @@ export const updateBoard = async (
 	res: Response
 ): Promise<void> => {
 	const { id: boardId } = req.params;
-	const { name } = req.body;
+	const { name, archived } = req.body;
 
 	if (!name) {
 		throw new BadRequestError('Please provide all values');
@@ -64,10 +61,15 @@ export const updateBoard = async (
 
 	checkPermissions(req.body.user, board.createdBy);
 
+	if (archived) {
+		board.archived = archived;
+	}
+
 	if (name) {
 		board.name = name;
-		await board.save();
 	}
+
+	await board.save();
 
 	res.status(StatusCodes.OK).json({ board });
 	/* const updatedBoard = await Board.findOneAndUpdate(

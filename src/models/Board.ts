@@ -7,6 +7,7 @@ const { Schema, Types } = mongoose;
 interface Board {
 	name: string;
 	lists: any;
+	archived: boolean;
 	createdBy: any;
 }
 
@@ -54,6 +55,10 @@ const BoardSchema = new Schema<BoardDocument>(
 				{ title: 'Offer' },
 				{ title: 'Follow Up' },
 			],
+		},
+		archived: {
+			type: Boolean,
+			default: false,
 		},
 		createdBy: {
 			type: Types.ObjectId,
