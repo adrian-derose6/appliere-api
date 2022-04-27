@@ -6,6 +6,12 @@ const { Schema, Types } = mongoose;
 
 interface Board {
 	name: string;
+	icon: {
+		color: {
+			name: String;
+			hex: String;
+		};
+	};
 	lists: any;
 	archived: boolean;
 	createdBy: any;
@@ -31,6 +37,20 @@ const BoardSchema = new Schema<BoardDocument>(
 			default: 'New Board',
 			maxlength: 30,
 			trim: true,
+		},
+		icon: {
+			type: {
+				color: {
+					name: String,
+					hex: String,
+				},
+			},
+			default: {
+				color: {
+					name: 'none',
+					hex: '#c7c4c4',
+				},
+			},
 		},
 		lists: {
 			type: [

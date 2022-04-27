@@ -9,6 +9,7 @@ import {
 } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
 import isEmpty from '../utils/isEmpty.js';
+import getRandomColor from '../utils/getRandomColor.js';
 
 export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
@@ -38,7 +39,14 @@ export const createBoard = async (
 	if (!name) {
 		throw new BadRequestError('Please name board');
 	}
-	const board = await Board.create({ createdBy: user.userId, name, archived });
+	const icon = { color: getRandomColor() };
+
+	const board = await Board.create({
+		createdBy: user.userId,
+		name,
+		archived,
+		icon,
+	});
 
 	res.status(StatusCodes.CREATED).json({ board });
 };
@@ -75,6 +83,7 @@ export const deleteBoard = async (
 ): Promise<void> => {
 	const { id: boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
+	console.log('deleting board');
 
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
