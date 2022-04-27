@@ -7,7 +7,7 @@ interface Job {
 	listId: any;
 }
 
-const JobSchema = new Schema<Job>({
+export const JobSchema = new Schema<Job>({
 	title: {
 		type: String,
 		trim: true,
@@ -20,6 +20,6 @@ const JobSchema = new Schema<Job>({
 	},
 });
 
-const List = mongoose.model<Job>('Job', JobSchema);
+const Jobs = mongoose.model<Job>('Job', JobSchema);
 
-export default List;
+export default Job;

@@ -11,7 +11,7 @@ import {
 const router: Router = express.Router();
 
 router.route('/').get(getBoards).post(createBoard);
-router.route('/:id').patch(updateBoard).delete(deleteBoard);
+router.route('/:id').delete(deleteBoard).patch(updateBoard);
 router.route('/:id/lists').get(getBoardLists);
 
 export default router;

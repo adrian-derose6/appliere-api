@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
 
+import { ListSchema } from './List.js';
+
 const { Schema, Types } = mongoose;
 
 interface Board {
@@ -11,16 +13,12 @@ interface Board {
 			hex: String;
 		};
 	};
+	lists: any;
 	archived: boolean;
 	createdBy: any;
 }
 
-export type BoardDocument = Board &
-	mongoose.Document & {
-		_doc: any;
-	};
-
-const BoardSchema = new Schema<BoardDocument>(
+const BoardSchema = new Schema<Board>(
 	{
 		name: {
 			type: String,
@@ -42,6 +40,16 @@ const BoardSchema = new Schema<BoardDocument>(
 				},
 			},
 		},
+		lists: {
+			type: [ListSchema],
+			default: [
+				{ name: 'Wishlist' },
+				{ name: 'Applied' },
+				{ name: 'Interview' },
+				{ name: 'Offer' },
+				{ name: 'Follow Up' },
+			],
+		},
 		archived: {
 			type: Boolean,
 			default: false,
@@ -55,6 +63,6 @@ const BoardSchema = new Schema<BoardDocument>(
 	{ timestamps: true }
 );
 
-const Board = mongoose.model<BoardDocument>('Board', BoardSchema);
+const Board = mongoose.model<Board>('Board', BoardSchema);
 
 export default Board;

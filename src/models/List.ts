@@ -4,22 +4,16 @@ const { Schema, Types } = mongoose;
 
 interface List {
 	name: string;
-	boardId: any;
 }
 
-const ListSchema = new Schema<List>({
+export const ListSchema = new Schema<List>({
 	name: {
 		type: String,
 		trim: true,
 		required: true,
 	},
-	boardId: {
-		type: Types.ObjectId,
-		required: true,
-		ref: 'Board',
-	},
 });
 
-const List = mongoose.model<List>('Board', ListSchema);
+const List = mongoose.model<List>('List', ListSchema);
 
 export default List;

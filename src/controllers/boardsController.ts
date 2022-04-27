@@ -25,7 +25,7 @@ export const getBoards = async (req: Request, res: Response): Promise<void> => {
 	};
 
 	const boards = await Board.find(queryObject);
-	const numOfBoards = await Board.countDocuments(queryObject);
+	const numOfBoards = boards.length;
 
 	res.status(StatusCodes.OK).json({ boards, numOfBoards });
 };
@@ -56,7 +56,6 @@ export const updateBoard = async (
 	res: Response
 ): Promise<void> => {
 	const { id: boardId } = req.params;
-	const { name, archived } = req.body;
 
 	const board = await Board.findOne({ _id: boardId });
 	if (!board) {
@@ -100,19 +99,14 @@ export const getBoardLists = async (
 	res: Response
 ): Promise<void> => {
 	const { user } = req.body;
-	const { id: boardId } = req.params;
+	const { id } = req.params;
 
-	const lists = Board.aggregate([
-		{
-			$match: { createdBy: user.userId },
-		},
-		{
-			$lookup: {
-				from: 'List',
-				localField: '_id',
-				foreignField: 'boardId',
-				as: 'lists',
-			},
-		},
-	]);
+	const board = await Board.findOne({ _id: id });
+	if (!board) {
+		throw new NotFoundError(`No board with id: ${id}`);
+	}
+
+	const lists = board.get('lists');
+
+	res.status(StatusCodes.OK).json({ lists });
 };
