@@ -8,7 +8,6 @@ import {
 	NotFoundError,
 } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
-import isEmpty from '../utils/isEmpty.js';
 import getRandomColor from '../utils/getRandomColor.js';
 
 export const snippet = async (req: Request, res: Response): Promise<void> => {
@@ -101,12 +100,10 @@ export const getBoardLists = async (
 	const { user } = req.body;
 	const { id } = req.params;
 
-	const board = await Board.findOne({ _id: id });
-	if (!board) {
+	const lists = await Board.findOne({ _id: id }, 'lists');
+	if (!lists) {
 		throw new NotFoundError(`No board with id: ${id}`);
 	}
 
-	const lists = board.get('lists');
-
-	res.status(StatusCodes.OK).json({ lists });
+	res.status(StatusCodes.OK).json({ data: lists, boardId: id });
 };

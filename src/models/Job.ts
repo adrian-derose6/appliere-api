@@ -4,21 +4,45 @@ const { Schema, Types } = mongoose;
 
 interface Job {
 	title: string;
+	employer: string;
+	salary: string;
+	boardId: any;
 	listId: any;
+	position: number;
 }
 
-export const JobSchema = new Schema<Job>({
-	title: {
-		type: String,
-		trim: true,
-		required: true,
+export const JobSchema = new Schema<Job>(
+	{
+		title: {
+			type: String,
+			trim: true,
+			required: true,
+		},
+		employer: {
+			type: String,
+			trim: true,
+			required: true,
+		},
+		salary: {
+			type: String,
+		},
+		boardId: {
+			type: Types.ObjectId,
+			required: true,
+			ref: 'Board',
+		},
+		listId: {
+			type: Types.ObjectId,
+			required: true,
+			ref: 'List',
+		},
+		position: {
+			type: Number,
+			required: true,
+		},
 	},
-	listId: {
-		type: Types.ObjectId,
-		required: true,
-		ref: 'List',
-	},
-});
+	{ timestamps: true }
+);
 
 const Jobs = mongoose.model<Job>('Job', JobSchema);
 
