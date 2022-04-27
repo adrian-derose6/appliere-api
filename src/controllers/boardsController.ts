@@ -8,7 +8,7 @@ import {
 	NotFoundError,
 } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
-import queryParamToBool from '../utils/queryParamToBool.js';
+import getRandomColor from '../utils/getRandomColor.js';
 
 export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
@@ -19,13 +19,14 @@ export const getBoards = async (req: Request, res: Response): Promise<void> => {
 	const { archived } = req.query;
 
 	let queryObject = {
-		archived,
+		archived: archived || false,
 		createdBy: user.userId,
 	};
 
 	const boards = await Board.find(queryObject);
+	const numOfBoards = boards.length;
 
-	res.status(StatusCodes.OK).json({ boards });
+	res.status(StatusCodes.OK).json({ boards, numOfBoards });
 };
 
 export const createBoard = async (
@@ -37,8 +38,15 @@ export const createBoard = async (
 	if (!name) {
 		throw new BadRequestError('Please name board');
 	}
+	const icon = { color: getRandomColor() };
 
-	const board = await Board.create({ createdBy: user.userId, name, archived });
+	const board = await Board.create({
+		createdBy: user.userId,
+		name,
+		archived,
+		icon,
+	});
+
 	res.status(StatusCodes.CREATED).json({ board });
 };
 
@@ -47,39 +55,24 @@ export const updateBoard = async (
 	res: Response
 ): Promise<void> => {
 	const { id: boardId } = req.params;
-	const { name, archived } = req.body;
-
-	if (!name) {
-		throw new BadRequestError('Please provide all values');
-	}
 
 	const board = await Board.findOne({ _id: boardId });
-
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
 	}
 
 	checkPermissions(req.body.user, board.createdBy);
 
-	if (archived) {
-		board.archived = archived;
-	}
-
-	if (name) {
-		board.name = name;
-	}
-
-	await board.save();
-
-	res.status(StatusCodes.OK).json({ board });
-	/* const updatedBoard = await Board.findOneAndUpdate(
+	const updatedBoard = await Board.findOneAndUpdate(
 		{ _id: boardId },
-		req.body,
+		{ $set: { ...req.body } },
 		{
 			new: true,
 			runValidators: true,
 		}
-	);*/
+	);
+
+	res.status(StatusCodes.OK).json({ updatedBoard });
 };
 
 export const deleteBoard = async (
@@ -88,6 +81,7 @@ export const deleteBoard = async (
 ): Promise<void> => {
 	const { id: boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
+	console.log('deleting board');
 
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
@@ -97,4 +91,19 @@ export const deleteBoard = async (
 	await board.remove();
 
 	res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' });
+};
+
+export const getBoardLists = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { user } = req.body;
+	const { id } = req.params;
+
+	const lists = await Board.findOne({ _id: id }, 'lists');
+	if (!lists) {
+		throw new NotFoundError(`No board with id: ${id}`);
+	}
+
+	res.status(StatusCodes.OK).json({ data: lists, boardId: id });
 };

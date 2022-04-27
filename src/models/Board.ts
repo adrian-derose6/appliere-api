@@ -1,30 +1,24 @@
-import { ObjectID } from 'mongodb';
 import mongoose from 'mongoose';
 import validator from 'validator';
+
+import { ListSchema } from './List.js';
 
 const { Schema, Types } = mongoose;
 
 interface Board {
 	name: string;
+	icon: {
+		color: {
+			name: String;
+			hex: String;
+		};
+	};
 	lists: any;
 	archived: boolean;
 	createdBy: any;
 }
 
-export type BoardDocument = Board &
-	mongoose.Document & {
-		_doc: any;
-	};
-
-const ListSchema = new Schema({
-	title: {
-		type: String,
-		trim: true,
-	},
-	jobs: [{ name: String, position: String }],
-});
-
-const BoardSchema = new Schema<BoardDocument>(
+const BoardSchema = new Schema<Board>(
 	{
 		name: {
 			type: String,
@@ -32,28 +26,28 @@ const BoardSchema = new Schema<BoardDocument>(
 			maxlength: 30,
 			trim: true,
 		},
+		icon: {
+			type: {
+				color: {
+					name: String,
+					hex: String,
+				},
+			},
+			default: {
+				color: {
+					name: 'none',
+					hex: '#c7c4c4',
+				},
+			},
+		},
 		lists: {
-			type: [
-				{
-					title: { type: String },
-					jobs: {
-						type: [{ company: String, position: String }],
-						default: [],
-					},
-				},
-			],
+			type: [ListSchema],
 			default: [
-				{
-					title: 'Wishlist',
-					jobs: [
-						{ company: 'Facebook', position: 'Software Engineer' },
-						{ company: 'Google', position: 'Front-End Developer' },
-					],
-				},
-				{ title: 'Applied' },
-				{ title: 'Interview' },
-				{ title: 'Offer' },
-				{ title: 'Follow Up' },
+				{ name: 'Wishlist' },
+				{ name: 'Applied' },
+				{ name: 'Interview' },
+				{ name: 'Offer' },
+				{ name: 'Follow Up' },
 			],
 		},
 		archived: {
@@ -69,6 +63,6 @@ const BoardSchema = new Schema<BoardDocument>(
 	{ timestamps: true }
 );
 
-const Board = mongoose.model<BoardDocument>('Board', BoardSchema);
+const Board = mongoose.model<Board>('Board', BoardSchema);
 
 export default Board;
