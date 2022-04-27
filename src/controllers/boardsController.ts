@@ -94,3 +94,25 @@ export const deleteBoard = async (
 
 	res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' });
 };
+
+export const getBoardLists = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { user } = req.body;
+	const { id: boardId } = req.params;
+
+	const lists = Board.aggregate([
+		{
+			$match: { createdBy: user.userId },
+		},
+		{
+			$lookup: {
+				from: 'List',
+				localField: '_id',
+				foreignField: 'boardId',
+				as: 'lists',
+			},
+		},
+	]);
+};
