@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import normalize from 'normalize-mongoose';
 
 const { Schema, Types } = mongoose;
 
@@ -13,6 +14,8 @@ export const ListSchema = new Schema<List>({
 		required: true,
 	},
 });
+
+ListSchema.plugin(normalize);
 
 const List = mongoose.model<List>('List', ListSchema);
 

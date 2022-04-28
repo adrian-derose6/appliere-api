@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import normalize from 'normalize-mongoose';
 
 import { ListSchema } from './List.js';
 
@@ -27,6 +28,7 @@ const BoardSchema = new Schema<Board>(
 			trim: true,
 		},
 		icon: {
+			_id: false,
 			type: {
 				color: {
 					name: String,
@@ -62,6 +64,8 @@ const BoardSchema = new Schema<Board>(
 	},
 	{ timestamps: true }
 );
+
+BoardSchema.plugin(normalize);
 
 const Board = mongoose.model<Board>('Board', BoardSchema);
 

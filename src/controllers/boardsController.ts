@@ -2,11 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import Board from '../models/Board.js';
-import {
-	BadRequestError,
-	UnauthenticatedError,
-	NotFoundError,
-} from '../errors/index.js';
+import { BadRequestError, NotFoundError } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
 import getRandomColor from '../utils/getRandomColor.js';
 
@@ -54,9 +50,9 @@ export const updateBoard = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const { id: boardId } = req.params;
-
+	const { boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
+
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
 	}
@@ -78,7 +74,7 @@ export const deleteBoard = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const { id: boardId } = req.params;
+	const { boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
 
 	if (!board) {
@@ -91,17 +87,16 @@ export const deleteBoard = async (
 	res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' });
 };
 
-export const getBoardLists = async (
-	req: Request,
-	res: Response
-): Promise<void> => {
+export const getBoard = async (req: Request, res: Response): Promise<void> => {
 	const { user } = req.body;
-	const { id } = req.params;
+	const { boardId } = req.params;
+	const board = await Board.findOne({ _id: boardId });
 
-	const lists = await Board.findOne({ _id: id }, 'lists');
-	if (!lists) {
-		throw new NotFoundError(`No board with id: ${id}`);
+	if (!board) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
 	}
 
-	res.status(StatusCodes.OK).json({ data: lists, boardId: id });
+	checkPermissions(req.body.user, board.createdBy);
+
+	res.status(StatusCodes.OK).json({ board });
 };
