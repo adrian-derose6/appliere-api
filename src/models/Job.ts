@@ -8,7 +8,7 @@ interface Job {
 	salary: string;
 	boardId: any;
 	listId: any;
-	position: number;
+	listPosition: number;
 }
 
 export const JobSchema = new Schema<Job>(
@@ -16,34 +16,34 @@ export const JobSchema = new Schema<Job>(
 		title: {
 			type: String,
 			trim: true,
-			required: true,
+			required: [true, 'No job title provided'],
 		},
 		employer: {
 			type: String,
 			trim: true,
-			required: true,
+			required: [true, 'No employer provided'],
 		},
 		salary: {
 			type: String,
 		},
 		boardId: {
 			type: Types.ObjectId,
-			required: true,
+			required: [true, 'No Board ID provided'],
 			ref: 'Board',
 		},
 		listId: {
 			type: Types.ObjectId,
-			required: true,
+			required: [true, 'No list ID provided'],
 			ref: 'List',
 		},
-		position: {
+		listPosition: {
 			type: Number,
-			required: true,
+			required: [true, 'No list position provided'],
 		},
 	},
 	{ timestamps: true }
 );
 
-const Jobs = mongoose.model<Job>('Job', JobSchema);
+const Job = mongoose.model<Job>('Job', JobSchema);
 
 export default Job;

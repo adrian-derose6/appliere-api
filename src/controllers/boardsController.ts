@@ -38,8 +38,8 @@ export const createBoard = async (
 	if (!name) {
 		throw new BadRequestError('Please name board');
 	}
-	const icon = { color: getRandomColor() };
 
+	const icon = { color: getRandomColor() };
 	const board = await Board.create({
 		createdBy: user.userId,
 		name,
@@ -62,7 +62,6 @@ export const updateBoard = async (
 	}
 
 	checkPermissions(req.body.user, board.createdBy);
-
 	const updatedBoard = await Board.findOneAndUpdate(
 		{ _id: boardId },
 		{ $set: { ...req.body } },
@@ -81,7 +80,6 @@ export const deleteBoard = async (
 ): Promise<void> => {
 	const { id: boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
-	console.log('deleting board');
 
 	if (!board) {
 		throw new NotFoundError(`No board with id: ${boardId}`);
