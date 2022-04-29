@@ -119,7 +119,7 @@ export const getBoardLists = async (
 
 	checkPermissions(req.body.user, lists.createdBy);
 
-	res.status(StatusCodes.OK).json({ boardId, data: lists });
+	res.status(StatusCodes.OK).json({ status: 'success', data: lists });
 };
 
 export const updateBoardLists = async (
@@ -148,5 +148,5 @@ export const updateBoardLists = async (
 		}
 	).select('lists id createdBy');
 
-	res.status(StatusCodes.OK).json({ updatedLists, boardId });
+	res.status(StatusCodes.OK).json({ status: 'success', data: updatedLists });
 };
