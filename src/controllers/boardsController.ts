@@ -6,6 +6,8 @@ import { BadRequestError, NotFoundError } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
 import getRandomColor from '../utils/getRandomColor.js';
 
+import { Types } from 'mongoose';
+
 export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
 };
@@ -99,4 +101,52 @@ export const getBoard = async (req: Request, res: Response): Promise<void> => {
 	checkPermissions(req.body.user, board.createdBy);
 
 	res.status(StatusCodes.OK).json({ board });
+};
+
+export const getBoardLists = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { user } = req.body;
+	const { boardId } = req.params;
+	const lists = await Board.findOne({ _id: boardId }).select(
+		'lists id createdBy'
+	);
+
+	if (!lists) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
+	}
+
+	checkPermissions(req.body.user, lists.createdBy);
+
+	res.status(StatusCodes.OK).json({ boardId, data: lists });
+};
+
+export const updateBoardLists = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { user, lists } = req.body;
+	const { boardId } = req.params;
+	const board = await Board.findOne({ _id: boardId });
+
+	if (!board) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
+	}
+
+	if (lists.length !== board.lists.length) {
+		throw new BadRequestError('Invalid request');
+	}
+
+	checkPermissions(req.body.user, board.createdBy);
+	const updatedLists = await Board.findOneAndUpdate(
+		{ _id: boardId },
+		{ $set: { lists } },
+		{
+			new: true,
+			runValidators: true,
+		}
+	).select('lists id createdBy');
+
+	res.status(StatusCodes.OK).json({ updatedLists, boardId });
 };

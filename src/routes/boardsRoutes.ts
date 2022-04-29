@@ -6,11 +6,14 @@ import {
 	updateBoard,
 	deleteBoard,
 	getBoard,
+	getBoardLists,
+	updateBoardLists,
 } from '../controllers/boardsController.js';
 
 const router: Router = express.Router();
 
 router.route('/').get(getBoards).post(createBoard);
 router.route('/:boardId').get(getBoard).delete(deleteBoard).patch(updateBoard);
+router.route('/:boardId/lists').get(getBoardLists).patch(updateBoardLists);
 
 export default router;
