@@ -24,7 +24,7 @@ export const createJob = async (req: Request, res: Response): Promise<void> => {
 	const createdBy = req.body.user.userId;
 	const job = await Job.create({ title, employer, boardId, listId, createdBy });
 
-	res.status(StatusCodes.CREATED).json({ status: 'success', data: job });
+	res.status(StatusCodes.CREATED).json({ status: 'success', data: { job } });
 };
 
 export const deleteJob = async (req: Request, res: Response) => {
@@ -41,7 +41,7 @@ export const deleteJob = async (req: Request, res: Response) => {
 
 	res
 		.status(StatusCodes.OK)
-		.json({ status: 'success', message: 'Success! Job removed' });
+		.json({ status: 'success', message: 'Job successfully deleted' });
 };
 
 export const getAllJobs = async (
@@ -72,4 +72,33 @@ export const getAllJobs = async (
 	res
 		.status(StatusCodes.OK)
 		.json({ status: 'success', data: { jobs, numOfJobs } });
+};
+
+export const updateJob = async (req: Request, res: Response) => {
+	const { jobId } = req.params;
+	const { data } = req.body;
+	const job = await Job.findOne({ _id: jobId });
+
+	if (!job) {
+		throw new NotFoundError(`No job with id ${jobId}`);
+	}
+
+	checkPermissions(req.body.user, job.createdBy);
+
+	const updatedJob = await Job.findOneAndUpdate(
+		{ _id: jobId },
+		{ $set: { ...data } },
+		{
+			new: true,
+			runValidators: true,
+		}
+	);
+
+	if (!updatedJob) {
+		throw new BadRequestError('Invalid information');
+	}
+
+	res
+		.status(StatusCodes.OK)
+		.json({ status: 'success', data: { job: updatedJob } });
 };
