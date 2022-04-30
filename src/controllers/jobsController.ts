@@ -14,5 +14,14 @@ export const snippet = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const createJob = async (req: Request, res: Response): Promise<void> => {
-	res.status(StatusCodes.OK).json({});
+	const { title, employer, boardId, listId } = req.body.data;
+
+	if (!title || !employer || !boardId || !listId) {
+		throw new BadRequestError('Please provide all required values');
+	}
+
+	const createdBy = req.body.user.userId;
+	const job = await Job.create({ title, employer, boardId, listId, createdBy });
+
+	res.status(StatusCodes.CREATED).json({ status: 'success', data: job });
 };
