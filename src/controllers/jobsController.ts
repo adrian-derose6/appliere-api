@@ -18,7 +18,7 @@ export const createJob = async (req: Request, res: Response): Promise<void> => {
 	const { title, employer, boardId, listId } = req.body.data;
 
 	if (!title || !employer || !boardId || !listId) {
-		throw new BadRequestError('Please provide all required values');
+		throw new BadRequestError('Missing required values');
 	}
 
 	const createdBy = req.body.user.userId;
@@ -42,4 +42,34 @@ export const deleteJob = async (req: Request, res: Response) => {
 	res
 		.status(StatusCodes.OK)
 		.json({ status: 'success', message: 'Success! Job removed' });
+};
+
+export const getAllJobs = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { boardId, listId } = req.query;
+
+	if (!boardId) {
+		throw new BadRequestError('No board ID provided');
+	}
+
+	const query: any = {
+		createdBy: req.body.user.userId,
+		boardId: boardId as string,
+	};
+
+	if (listId) {
+		query.listId = listId;
+	}
+
+	const jobs = await Job.find(query);
+	if (!jobs) {
+		throw new NotFoundError('No jobs with provided information');
+	}
+	const numOfJobs = jobs.length;
+
+	res
+		.status(StatusCodes.OK)
+		.json({ status: 'success', data: { jobs, numOfJobs } });
 };
