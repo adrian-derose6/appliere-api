@@ -9,6 +9,7 @@ interface Job {
 	salary?: string;
 	boardId: any;
 	listId: any;
+	pos: number;
 	createdBy: any;
 }
 
@@ -37,6 +38,11 @@ export const JobSchema = new Schema<Job>(
 			required: [true, 'No list ID provided'],
 			ref: 'List',
 		},
+		pos: {
+			type: Number,
+			required: [true, 'No list position provided'],
+			default: 0,
+		},
 		createdBy: {
 			type: Types.ObjectId,
 			required: [true, 'No user ID provided'],
@@ -45,6 +51,7 @@ export const JobSchema = new Schema<Job>(
 	},
 	{ timestamps: true }
 );
+
 JobSchema.plugin(normalize);
 
 const Job = mongoose.model<Job>('Job', JobSchema);

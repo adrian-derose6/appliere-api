@@ -16,13 +16,28 @@ export const snippet = async (req: Request, res: Response): Promise<void> => {
 
 export const createJob = async (req: Request, res: Response): Promise<void> => {
 	const { title, employer, boardId, listId } = req.body.data;
+	const { userId } = req.body.user;
 
 	if (!title || !employer || !boardId || !listId) {
 		throw new BadRequestError('Missing required values');
 	}
 
-	const createdBy = req.body.user.userId;
-	const job = await Job.create({ title, employer, boardId, listId, createdBy });
+	let createObj = {
+		title,
+		employer,
+		boardId,
+		listId,
+		pos: 0,
+		createdBy: userId,
+	};
+	// Create job
+	const job = await Job.create(createObj);
+
+	// Increment all existing jobs' positions
+	await Job.updateMany(
+		{ boardId, listId, _id: { $ne: job._id } },
+		{ $inc: { pos: 1 } }
+	);
 
 	res.status(StatusCodes.CREATED).json({ status: 'success', data: { job } });
 };
@@ -95,7 +110,7 @@ export const updateJob = async (req: Request, res: Response) => {
 	);
 
 	if (!updatedJob) {
-		throw new BadRequestError('Invalid information');
+		throw new BadRequestError('Invalid data provided');
 	}
 
 	res
