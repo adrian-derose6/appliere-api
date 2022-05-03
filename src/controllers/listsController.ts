@@ -33,19 +33,25 @@ export const getLists = async (req: Request, res: Response): Promise<void> => {
 				pipeline: [
 					{ $match: { $expr: { $eq: ['$listId', '$$listId'] } } },
 					{ $sort: { pos: 1 } },
+					{ $set: { id: '$_id' } },
+					{ $unset: '_id' },
+					{ $unset: '__v' },
 				],
 				as: 'jobs',
 			},
 		},
 		{
-			$addFields: { 'lists.jobs': '$jobs' },
+			$addFields: { 'lists.jobs': '$jobs', 'lists.id': '$lists._id' },
 		},
+		{ $unset: 'lists._id' },
 		{
 			$group: {
 				_id: '$_id',
 				lists: { $push: '$lists' },
 			},
 		},
+		{ $set: { id: '$_id' } },
+		{ $unset: '_id' },
 	]);
 
 	if (!lists) {
