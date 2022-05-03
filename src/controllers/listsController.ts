@@ -91,3 +91,32 @@ export const updateLists = async (
 
 	res.status(StatusCodes.OK).json({ status: 'success', data: updatedLists });
 };
+
+export const updateListJobs = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
+	const { user, lists } = req.body;
+	const { boardId } = req.params;
+	const board = await Board.findOne({ _id: boardId });
+
+	if (!board) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
+	}
+
+	if (lists.length !== board.lists.length) {
+		throw new BadRequestError('Invalid request');
+	}
+
+	checkPermissions(req.body.user, board.createdBy);
+	const updatedLists = await Board.findOneAndUpdate(
+		{ _id: boardId },
+		{ $set: { lists } },
+		{
+			new: true,
+			runValidators: true,
+		}
+	).select('lists id createdBy');
+
+	res.status(StatusCodes.OK).json({ status: 'success', data: updatedLists });
+};

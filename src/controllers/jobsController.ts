@@ -51,8 +51,18 @@ export const deleteJob = async (req: Request, res: Response) => {
 		throw new NotFoundError(`No job with id: ${jobId}`);
 	}
 
+	const boardId = job.boardId;
+	const listId = job.listId;
+	const deletedPos = job.pos;
+
 	checkPermissions(req.body.user, job.createdBy);
 	await job.remove();
+
+	// Decrement all existing jobs' positions with pos > job.pos
+	await Job.updateMany(
+		{ boardId, listId, pos: { $gt: deletedPos } },
+		{ $inc: { pos: -1 } }
+	);
 
 	res
 		.status(StatusCodes.OK)
@@ -92,6 +102,7 @@ export const getAllJobs = async (
 export const updateJob = async (req: Request, res: Response) => {
 	const { jobId } = req.params;
 	const { data } = req.body;
+	const { listId, pos } = data;
 	const job = await Job.findOne({ _id: jobId });
 
 	if (!job) {
@@ -111,6 +122,44 @@ export const updateJob = async (req: Request, res: Response) => {
 
 	if (!updatedJob) {
 		throw new BadRequestError('Invalid data provided');
+	}
+
+	const boardId = updatedJob.boardId;
+	const prevPosition = job.pos;
+	const nextPosition = updatedJob.pos;
+
+	if (nextPosition && nextPosition > prevPosition) {
+		await Job.updateMany(
+			{
+				boardId,
+				listId,
+				_id: { $ne: updatedJob._id },
+				pos: { $gt: prevPosition, $lt: nextPosition },
+			},
+			{ $inc: { pos: -1 } }
+		);
+
+		await Job.updateMany(
+			{
+				boardId,
+				listId,
+				_id: { $ne: updatedJob._id },
+				pos: { $gte: nextPosition },
+			},
+			{ $inc: { pos: 1 } }
+		);
+	}
+
+	if (nextPosition && nextPosition < prevPosition) {
+		await Job.updateMany(
+			{
+				boardId,
+				listId,
+				_id: { $ne: updatedJob._id },
+				pos: { $gte: nextPosition },
+			},
+			{ $inc: { pos: 1 } }
+		);
 	}
 
 	res
