@@ -27,8 +27,13 @@ export const getLists = async (req: Request, res: Response): Promise<void> => {
 		{
 			$lookup: {
 				from: Job.collection.name,
-				localField: 'lists._id',
-				foreignField: 'listId',
+				let: {
+					listId: '$lists._id',
+				},
+				pipeline: [
+					{ $match: { $expr: { $eq: ['$listId', '$$listId'] } } },
+					{ $sort: { pos: 1 } },
+				],
 				as: 'jobs',
 			},
 		},
