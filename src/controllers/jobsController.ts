@@ -126,7 +126,7 @@ export const updateJob = async (req: Request, res: Response) => {
 
 	const boardId = updatedJob.boardId;
 	const prevPosition = job.pos;
-	const nextPosition = updatedJob.pos;
+	const nextPosition = pos;
 
 	if (nextPosition && nextPosition > prevPosition) {
 		await Job.updateMany(
@@ -134,19 +134,9 @@ export const updateJob = async (req: Request, res: Response) => {
 				boardId,
 				listId,
 				_id: { $ne: updatedJob._id },
-				pos: { $gt: prevPosition, $lt: nextPosition },
+				pos: { $gt: prevPosition, $lte: nextPosition },
 			},
 			{ $inc: { pos: -1 } }
-		);
-
-		await Job.updateMany(
-			{
-				boardId,
-				listId,
-				_id: { $ne: updatedJob._id },
-				pos: { $gte: nextPosition },
-			},
-			{ $inc: { pos: 1 } }
 		);
 	}
 
