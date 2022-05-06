@@ -27,7 +27,6 @@ export const createJob = async (req: Request, res: Response): Promise<void> => {
 		employer,
 		boardId,
 		listId,
-		pos: 0,
 		createdBy: userId,
 	};
 	// Create job
@@ -108,6 +107,18 @@ export const updateJob = async (req: Request, res: Response) => {
 	if (!job) {
 		throw new NotFoundError(`No job with id ${jobId}`);
 	}
+	const homeListId = job.listId;
+	const listLength = await Job.countDocuments({
+		boardId: job.boardId,
+		listId: listId ? listId : job.listId,
+	});
+
+	if (
+		(listId === job.listId && pos > listLength - 1) ||
+		(listId !== job.listId && pos > listLength)
+	) {
+		throw new BadRequestError('Value of "pos" too large');
+	}
 
 	checkPermissions(req.body.user, job.createdBy);
 
@@ -125,31 +136,57 @@ export const updateJob = async (req: Request, res: Response) => {
 	}
 
 	const boardId = updatedJob.boardId;
-	const prevPosition = job.pos;
-	const nextPosition = pos;
 
-	if (nextPosition && nextPosition > prevPosition) {
+	// Reorder new list
+	if (updatedJob.listId !== homeListId) {
 		await Job.updateMany(
 			{
 				boardId,
-				listId,
+				listId: updatedJob.listId,
 				_id: { $ne: updatedJob._id },
-				pos: { $gt: prevPosition, $lte: nextPosition },
+				pos: { $gte: updatedJob.pos },
+			},
+			{ $inc: { pos: 1 } }
+		);
+
+		await Job.updateMany(
+			{
+				boardId,
+				listId: homeListId,
+				pos: { $gt: job.pos },
 			},
 			{ $inc: { pos: -1 } }
 		);
 	}
 
-	if (nextPosition && nextPosition < prevPosition) {
-		await Job.updateMany(
-			{
-				boardId,
-				listId,
-				_id: { $ne: updatedJob._id },
-				pos: { $gte: nextPosition },
-			},
-			{ $inc: { pos: 1 } }
-		);
+	const prevPosition = job.pos;
+	const nextPosition = updatedJob.pos;
+
+	// Reorder within home list
+	if (updatedJob.listId === homeListId) {
+		if (nextPosition && nextPosition > prevPosition) {
+			await Job.updateMany(
+				{
+					boardId,
+					listId: homeListId,
+					_id: { $ne: updatedJob._id },
+					pos: { $gt: prevPosition, $lte: nextPosition },
+				},
+				{ $inc: { pos: -1 } }
+			);
+		}
+
+		if (nextPosition && nextPosition < prevPosition) {
+			await Job.updateMany(
+				{
+					boardId,
+					listId: homeListId,
+					_id: { $ne: updatedJob._id },
+					pos: { $gte: nextPosition },
+				},
+				{ $inc: { pos: 1 } }
+			);
+		}
 	}
 
 	res

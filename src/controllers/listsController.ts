@@ -16,6 +16,12 @@ export const getLists = async (req: Request, res: Response): Promise<void> => {
 		'lists id createdBy'
 	);
 
+	if (!lists) {
+		throw new NotFoundError(`No board with id: ${boardId}`);
+	}
+
+	checkPermissions(req.body.user, lists.createdBy);
+
 	let matchBoardId = new mongoose.Types.ObjectId(boardId);
 	let matchUserId = new mongoose.Types.ObjectId(userId);
 
@@ -54,13 +60,7 @@ export const getLists = async (req: Request, res: Response): Promise<void> => {
 		{ $unset: '_id' },
 	]);
 
-	if (!lists) {
-		throw new NotFoundError(`No board with id: ${boardId}`);
-	}
-
-	checkPermissions(req.body.user, lists.createdBy);
-
-	res.status(StatusCodes.OK).json({ status: 'success', data: aggrLists });
+	res.status(StatusCodes.OK).json({ status: 'success', data: aggrLists[0] });
 };
 
 export const updateLists = async (
@@ -79,10 +79,17 @@ export const updateLists = async (
 		throw new BadRequestError('Invalid request');
 	}
 
+	const newLists = lists.map((list: any, index: number) => {
+		return {
+			name: list.name,
+			_id: list.id,
+		};
+	});
+
 	checkPermissions(req.body.user, board.createdBy);
 	const updatedLists = await Board.findOneAndUpdate(
 		{ _id: boardId },
-		{ $set: { lists } },
+		{ $set: { lists: newLists } },
 		{
 			new: true,
 			runValidators: true,
@@ -92,7 +99,7 @@ export const updateLists = async (
 	res.status(StatusCodes.OK).json({ status: 'success', data: updatedLists });
 };
 
-export const updateListJobs = async (
+export const updateList = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
