@@ -38,7 +38,7 @@ export const updateJobPosition = async (
 	// Update "pos" field on job
 	const updatedJob = await Job.findOneAndUpdate(
 		{ _id: jobId },
-		{ $set: { pos } },
+		{ $set: { pos, listId: nextListId } },
 		{
 			new: true,
 			runValidators: true,
