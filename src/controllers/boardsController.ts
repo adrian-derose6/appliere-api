@@ -6,8 +6,6 @@ import { BadRequestError, NotFoundError } from '../errors/index.js';
 import checkPermissions from '../utils/checkPermissions.js';
 import getRandomColor from '../utils/getRandomColor.js';
 
-import { Types } from 'mongoose';
-
 export const snippet = async (req: Request, res: Response): Promise<void> => {
 	res.status(StatusCodes.OK).json({});
 };
