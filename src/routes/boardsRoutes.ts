@@ -7,7 +7,7 @@ import {
 	deleteBoard,
 	getBoard,
 } from '../controllers/boards/index.js';
-import { getLists, updateLists } from '../controllers/listsController.js';
+import { getLists, updateLists } from '../controllers/lists/index.js';
 
 const router: Router = express.Router();
 
