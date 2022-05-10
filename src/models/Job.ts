@@ -3,7 +3,7 @@ import normalize from 'normalize-mongoose';
 
 const { Schema, Types } = mongoose;
 
-interface Job {
+export interface Job {
 	title: string;
 	employer: string;
 	salary?: string;

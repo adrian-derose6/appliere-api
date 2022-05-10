@@ -45,11 +45,11 @@ const BoardSchema = new Schema<Board>(
 		lists: {
 			type: [ListSchema],
 			default: [
-				{ name: 'Wishlist' },
-				{ name: 'Applied' },
-				{ name: 'Interview' },
-				{ name: 'Offer' },
-				{ name: 'Follow Up' },
+				{ name: 'Wishlist', jobs: [] },
+				{ name: 'Applied', jobs: [] },
+				{ name: 'Interview', jobs: [] },
+				{ name: 'Offer', jobs: [] },
+				{ name: 'Follow Up', jobs: [] },
 			],
 		},
 		archived: {

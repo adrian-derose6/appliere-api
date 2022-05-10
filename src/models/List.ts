@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import normalize from 'normalize-mongoose';
+import { JobSchema, Job } from './Job.js';
 
 const { Schema, Types } = mongoose;
 

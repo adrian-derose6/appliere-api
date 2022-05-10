@@ -67,7 +67,7 @@ export const updateLists = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const { user, lists } = req.body;
+	const { lists } = req.body;
 	const { boardId } = req.params;
 	const board = await Board.findOne({ _id: boardId });
 
