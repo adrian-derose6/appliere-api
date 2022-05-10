@@ -5,7 +5,10 @@ import Job from '../../models/Job.js';
 import { BadRequestError, NotFoundError } from '../../errors/index.js';
 import checkPermissions from '../../utils/checkPermissions.js';
 
-export const updateJobPosition = async (req: Request, res: Response) => {
+export const updateJobPosition = async (
+	req: Request,
+	res: Response
+): Promise<void> => {
 	const { jobId } = req.params;
 	const { listId, pos } = req.body;
 	const job = await Job.findOne({ _id: jobId });
@@ -42,13 +45,13 @@ export const updateJobPosition = async (req: Request, res: Response) => {
 		}
 	);
 
-	// Throw error is updated job doesn't exist
+	// Throw error if updated job doesn't exist
 	if (!updatedJob) {
-		throw new BadRequestError('Invalid data provided');
+		throw new BadRequestError('Invalid request data provided');
 	}
 
 	// Reorder new list when job is moved
-	if (updatedJob.listId !== homeListId) {
+	if (updatedJob.listId.toString() !== homeListId.toString()) {
 		await Job.updateMany(
 			{
 				boardId: updatedJob.boardId,
@@ -78,13 +81,13 @@ export const updateJobPosition = async (req: Request, res: Response) => {
 	console.log('Next List: ', updatedJob.listId);
 
 	// Reorder jobs within home list
-	/*if (updatedJob.listId === homeListId) {
+	if (updatedJob.listId.toString() === homeListId.toString()) {
 		if (nextPosition > prevPosition) {
 			await Job.updateMany(
 				{
 					boardId: updatedJob.boardId,
 					listId: homeListId,
-					_id: { $ne: updatedJob._id },
+					_id: { $ne: job._id },
 					pos: { $gt: prevPosition, $lte: nextPosition },
 				},
 				{ $inc: { pos: -1 } }
@@ -96,13 +99,13 @@ export const updateJobPosition = async (req: Request, res: Response) => {
 				{
 					boardId: updatedJob.boardId,
 					listId: homeListId,
-					_id: { $ne: updatedJob._id },
+					_id: { $ne: job._id },
 					pos: { $gte: nextPosition },
 				},
 				{ $inc: { pos: 1 } }
 			);
 		}
-	}*/
+	}
 
 	res
 		.status(StatusCodes.OK)

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import mongoose from 'mongoose';
 
 import Board from '../../models/Board.js';
 import List from '../../models/List.js';
