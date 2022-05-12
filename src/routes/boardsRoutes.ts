@@ -2,16 +2,17 @@ import express, { Router } from 'express';
 
 import {
 	createBoard,
-	getBoards,
+	getAllBoards,
 	updateBoard,
 	deleteBoard,
-	getBoardLists,
-} from '../controllers/boardsController.js';
+	getBoard,
+} from '../controllers/boards/index.js';
+import { getLists, updateLists } from '../controllers/lists/index.js';
 
 const router: Router = express.Router();
 
-router.route('/').get(getBoards).post(createBoard);
-router.route('/:id').delete(deleteBoard).patch(updateBoard);
-router.route('/:id/lists').get(getBoardLists);
+router.route('/').get(getAllBoards).post(createBoard);
+router.route('/:boardId').get(getBoard).delete(deleteBoard).patch(updateBoard);
+router.route('/:boardId/lists').get(getLists).patch(updateLists);
 
 export default router;

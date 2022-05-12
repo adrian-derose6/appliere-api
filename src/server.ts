@@ -12,6 +12,7 @@ import connectDB from './db/connect-db.js';
 // Import routes
 import authRouter from './routes/authRoutes.js';
 import boardsRouter from './routes/boardsRoutes.js';
+import jobsRouter from './routes/jobsRoutes.js';
 
 // Import custom middleware
 import errorHandler from './middleware/errorHandler.js';
@@ -37,6 +38,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/boards', authenticateUser, boardsRouter);
+app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 
 // Inject custom middleware
 app.use(errorHandler);

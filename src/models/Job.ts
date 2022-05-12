@@ -1,14 +1,16 @@
 import mongoose from 'mongoose';
+import normalize from 'normalize-mongoose';
 
 const { Schema, Types } = mongoose;
 
-interface Job {
+export interface Job {
 	title: string;
 	employer: string;
-	salary: string;
+	salary?: string;
 	boardId: any;
 	listId: any;
-	listPosition: number;
+	pos: number;
+	createdBy: any;
 }
 
 export const JobSchema = new Schema<Job>(
@@ -36,13 +38,21 @@ export const JobSchema = new Schema<Job>(
 			required: [true, 'No list ID provided'],
 			ref: 'List',
 		},
-		listPosition: {
+		pos: {
 			type: Number,
 			required: [true, 'No list position provided'],
+			default: 0,
+		},
+		createdBy: {
+			type: Types.ObjectId,
+			required: [true, 'No user ID provided'],
+			ref: 'User',
 		},
 	},
 	{ timestamps: true }
 );
+
+JobSchema.plugin(normalize);
 
 const Job = mongoose.model<Job>('Job', JobSchema);
 
