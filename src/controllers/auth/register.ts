@@ -6,7 +6,6 @@ import { BadRequestError } from '../../errors/index.js';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 	const { firstName, lastName, email, password } = req.body;
-
 	if (!firstName || !email || !password) {
 		throw new BadRequestError('Please provide all values');
 	}

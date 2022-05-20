@@ -6,7 +6,6 @@ import { BadRequestError, UnauthenticatedError } from '../../errors/index.js';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
 	const { email, password } = req.body;
-
 	if (!email || !password) {
 		throw new BadRequestError('Please provide all values');
 	}
