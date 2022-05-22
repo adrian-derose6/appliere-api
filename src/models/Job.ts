@@ -6,7 +6,9 @@ const { Schema, Types } = mongoose;
 export interface Job {
 	title: string;
 	employer: string;
-	salary?: string;
+	htmlDescription?: string;
+	salary?: number;
+	url?: string;
 	boardId: any;
 	listId: any;
 	pos: number;
@@ -25,7 +27,13 @@ export const JobSchema = new Schema<Job>(
 			trim: true,
 			required: [true, 'No employer provided'],
 		},
+		htmlDescription: {
+			type: String,
+		},
 		salary: {
+			type: Number,
+		},
+		url: {
 			type: String,
 		},
 		boardId: {
