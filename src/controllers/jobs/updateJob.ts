@@ -7,7 +7,17 @@ import checkPermissions from '../../utils/checkPermissions.js';
 
 export const updateJob = async (req: Request, res: Response): Promise<void> => {
 	const { jobId } = req.params;
-	const { title, employer, htmlDescription, salary, url } = req.body.data;
+	const {
+		title,
+		employer,
+		htmlDescription,
+		salary,
+		postURL,
+		location,
+		color,
+		jobType,
+		isRemote,
+	} = req.body.data;
 	const job = await Job.findOne({ _id: jobId });
 
 	if (!job) {
@@ -21,7 +31,11 @@ export const updateJob = async (req: Request, res: Response): Promise<void> => {
 		employer,
 		htmlDescription,
 		salary,
-		url,
+		postURL,
+		location,
+		color,
+		jobType,
+		isRemote,
 	};
 
 	const updatedJob = await Job.findOneAndUpdate(
