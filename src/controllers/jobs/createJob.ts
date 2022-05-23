@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import Job from '../../models/Job.js';
 import { BadRequestError } from '../../errors/index.js';
+import getJobColor from '../../utils/getJobColor.js';
 import checkPermissions from '../../utils/checkPermissions.js';
 
 export const createJob = async (req: Request, res: Response): Promise<void> => {
@@ -18,6 +19,7 @@ export const createJob = async (req: Request, res: Response): Promise<void> => {
 		employer,
 		boardId,
 		listId,
+		color: getJobColor(),
 		createdBy: userId,
 	};
 	// Create job
