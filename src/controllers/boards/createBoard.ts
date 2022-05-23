@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import Board from '../../models/Board.js';
 import { BadRequestError, NotFoundError } from '../../errors/index.js';
 import checkPermissions from '../../utils/checkPermissions.js';
-import getRandomColor from '../../utils/getRandomColor.js';
+import getBoardIconColor from '../../utils/getBoardIconColor.js';
 
 export const createBoard = async (
 	req: Request,
@@ -16,7 +16,7 @@ export const createBoard = async (
 		throw new BadRequestError('Please name board');
 	}
 
-	const icon = { color: getRandomColor() };
+	const icon = { color: getBoardIconColor() };
 	const board = await Board.create({
 		createdBy: user.userId,
 		name,

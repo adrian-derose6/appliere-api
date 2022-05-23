@@ -1,9 +1,9 @@
-export interface Color {
+export interface ColorObj {
 	name: string;
 	hex: string;
 }
 
-export const BOARD_ICON_COLORS: Color[] = [
+export const BOARD_ICON_COLORS: ColorObj[] = [
 	{
 		name: 'none',
 		hex: '#c7c4c4',
@@ -70,10 +70,10 @@ export const BOARD_ICON_COLORS: Color[] = [
 	},
 ];
 
-const getRandomColor = (): Color => {
+const getBoardIconColor = (): ColorObj => {
 	return BOARD_ICON_COLORS[
 		Math.floor(Math.random() * BOARD_ICON_COLORS.length)
 	];
 };
 
-export default getRandomColor;
+export default getBoardIconColor;
