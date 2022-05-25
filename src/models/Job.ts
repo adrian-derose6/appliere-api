@@ -3,7 +3,17 @@ import normalize from 'normalize-mongoose';
 
 const { Schema, Types } = mongoose;
 
-type JobType = 'FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'INTERNSHIP';
+export enum JobType {
+	FULL_TIME = 'FULL_TIME',
+	PART_TIME = 'PART_TIME',
+	CONTRACTOR = 'CONTRACTOR',
+	INTERNSHIP = 'INTERNSHIP',
+}
+
+export enum Setting {
+	OFFICE = 'OFFICE',
+	REMOTE = 'REMOTE',
+}
 
 export interface Job {
 	title: string;
@@ -11,7 +21,7 @@ export interface Job {
 	htmlDescription?: string;
 	salary?: number;
 	jobType?: JobType;
-	isRemote?: boolean;
+	setting?: Setting;
 	location?: string;
 	postURL?: string;
 	boardId: any;
@@ -42,10 +52,13 @@ export const JobSchema = new Schema<Job>(
 		},
 		jobType: {
 			type: String,
+			default: JobType.FULL_TIME,
 			trim: true,
 		},
-		isRemote: {
-			type: Boolean,
+		setting: {
+			type: String,
+			default: Setting.OFFICE,
+			trim: true,
 		},
 		location: {
 			type: String,
