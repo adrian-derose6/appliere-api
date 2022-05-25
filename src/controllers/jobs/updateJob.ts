@@ -16,7 +16,7 @@ export const updateJob = async (req: Request, res: Response): Promise<void> => {
 		location,
 		color,
 		jobType,
-		isRemote,
+		setting,
 	} = req.body.data;
 	const job = await Job.findOne({ _id: jobId });
 
@@ -35,7 +35,7 @@ export const updateJob = async (req: Request, res: Response): Promise<void> => {
 		location,
 		color,
 		jobType,
-		isRemote,
+		setting,
 	};
 
 	const updatedJob = await Job.findOneAndUpdate(
