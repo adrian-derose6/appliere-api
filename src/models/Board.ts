@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import validator from 'validator';
 import normalize from 'normalize-mongoose';
 
 import { ListSchema } from './List.js';
@@ -49,7 +48,7 @@ const BoardSchema = new Schema<Board>(
 				{ name: 'Applied', jobs: [] },
 				{ name: 'Interview', jobs: [] },
 				{ name: 'Offer', jobs: [] },
-				{ name: 'Follow Up', jobs: [] },
+				{ name: 'Rejected', jobs: [] },
 			],
 		},
 		archived: {
