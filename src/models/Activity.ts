@@ -43,6 +43,7 @@ export interface Activity {
 	endAt: string;
 	activityCategory: ActivityCategory;
 	job: any;
+	boardId: any;
 	createdBy: any;
 }
 
@@ -71,6 +72,11 @@ export const ActivitySchema = new Schema<Activity>(
 			type: Types.ObjectId,
 			required: [true, 'No job ID provided'],
 			ref: 'Job',
+		},
+		boardId: {
+			type: Types.ObjectId,
+			required: [true, 'No board ID provided'],
+			ref: 'Board',
 		},
 		createdBy: {
 			type: Types.ObjectId,
