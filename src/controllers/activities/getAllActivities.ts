@@ -25,9 +25,10 @@ export const getAllActivities = async (
 	if (!activities) {
 		throw new NotFoundError('No activities matched request');
 	}
-
-	checkPermissions(user, activities[0].createdBy);
 	const numOfActivities = activities.length;
+	if (numOfActivities > 0) {
+		checkPermissions(user, activities[0].createdBy);
+	}
 
 	res
 		.status(StatusCodes.OK)
