@@ -21,10 +21,11 @@ export const getAllActivities = async (
 		boardId: boardId as string,
 	};
 
-	const activities = await Activity.find(query);
+	const activities = await Activity.find(query).populate('job');
 	if (!activities) {
 		throw new NotFoundError('No activities matched request');
 	}
+
 	checkPermissions(user, activities[0].createdBy);
 	const numOfActivities = activities.length;
 

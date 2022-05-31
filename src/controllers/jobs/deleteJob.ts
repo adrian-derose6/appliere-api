@@ -7,7 +7,6 @@ import checkPermissions from '../../utils/checkPermissions.js';
 
 export const deleteJob = async (req: Request, res: Response) => {
 	const { jobId } = req.params;
-	console.log(jobId);
 	const job = await Job.findOne({ _id: jobId });
 
 	if (!job) {
