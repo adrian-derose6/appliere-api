@@ -21,7 +21,9 @@ export const getAllActivities = async (
 		boardId: boardId as string,
 	};
 
-	const activities = await Activity.find(query).populate('job');
+	const activities = await Activity.find(query)
+		.sort({ endAt: 'asc' })
+		.populate('job');
 	if (!activities) {
 		throw new NotFoundError('No activities matched request');
 	}

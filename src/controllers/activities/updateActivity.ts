@@ -10,16 +10,8 @@ export const updateActivity = async (
 	res: Response
 ): Promise<void> => {
 	const { activityId } = req.params;
-	const {
-		title,
-		note,
-		completed,
-		completedAt,
-		startAt,
-		endAt,
-		activityCategory,
-		jobId,
-	} = req.body;
+	const { title, note, completed, startAt, endAt, activityCategory, jobId } =
+		req.body;
 	const activity = await Activity.findOne({ _id: activityId });
 
 	if (!activity) {
@@ -32,7 +24,6 @@ export const updateActivity = async (
 		title,
 		note,
 		completed,
-		completedAt,
 		startAt,
 		endAt,
 		activityCategory,
