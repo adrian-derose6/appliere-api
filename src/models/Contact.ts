@@ -60,7 +60,6 @@ export const ContactSchema = new Schema<Contact>(
 		],
 		boardId: {
 			type: Types.ObjectId,
-			required: [true, 'Board ID required'],
 			ref: 'Board',
 		},
 		createdBy: {

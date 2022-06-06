@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import Activity from '../../models/Activity.js';
+import Contact from '../../models/Contact.js';
 import { BadRequestError } from '../../errors/index.js';
 import checkPermissions from '../../utils/checkPermissions.js';
 
-export const createActivity = async (
+export const createContact = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
@@ -23,14 +23,25 @@ export const createActivity = async (
 	const { userId } = req.body.user;
 
 	if (!firstName || !lastName) {
-		throw new BadRequestError('Missing required values');
+		throw new BadRequestError('Missing required values: firstName or lastName');
 	}
 
-	let createObj = {};
-	// Create activity
-	const activity = await Activity.create(createObj);
+	let createObj = {
+		firstName,
+		lastName,
+		jobTitle,
+		companies,
+		location,
+		emails,
+		phones,
+		jobs,
+		boardId,
+		createdBy: userId,
+	};
+	// Create contact document
+	const contact = await Contact.create(createObj);
 
 	res
 		.status(StatusCodes.CREATED)
-		.json({ status: 'success', data: { activity } });
+		.json({ status: 'success', data: { contact } });
 };
