@@ -14,7 +14,7 @@ import authRouter from './routes/authRoutes.js';
 import boardsRouter from './routes/boardsRoutes.js';
 import jobsRouter from './routes/jobsRoutes.js';
 import activitiesRouter from './routes/activitiesRoutes.js';
-import contactsRouter from './routes/contactRoutes.js';
+import contactsRouter from './routes/contactsRoutes.js';
 
 // Import custom middleware
 import errorHandler from './middleware/errorHandler.js';
