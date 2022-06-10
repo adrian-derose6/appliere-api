@@ -14,7 +14,6 @@ export const getAllContacts = async (
 
 	const query = {
 		createdBy: user?.userId,
-		boardId: boardId as string,
 	};
 
 	const contacts = await Contact.find(query);
