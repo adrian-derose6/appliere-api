@@ -44,6 +44,10 @@ export const ContactSchema = new Schema<Contact>(
 			type: String,
 			required: [true, 'Last name required'],
 		},
+		jobTitle: {
+			type: String,
+			trim: true,
+		},
 		companies: [
 			{
 				type: String,
