@@ -14,6 +14,7 @@ import authRouter from './routes/authRoutes.js';
 import boardsRouter from './routes/boardsRoutes.js';
 import jobsRouter from './routes/jobsRoutes.js';
 import activitiesRouter from './routes/activitiesRoutes.js';
+import contactsRouter from './routes/contactsRoutes.js';
 
 // Import custom middleware
 import errorHandler from './middleware/errorHandler.js';
@@ -25,7 +26,7 @@ dotenv.config();
 // Initialize app
 const app: Express = express();
 
-// Inject external middleware
+// App config/external middleware
 if (process.env.NODE_ENV !== 'production') {
 	app.use(morgan('dev'));
 }
@@ -41,8 +42,9 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/boards', authenticateUser, boardsRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 app.use('/api/v1/activities', authenticateUser, activitiesRouter);
+app.use('/api/v1/contacts', authenticateUser, contactsRouter);
 
-// Inject custom middleware
+// Custom middleware
 app.use(errorHandler);
 app.use(notFound);
 
